@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Untitled Document</title>
+</head>
+<head>
+	<title>Failed workstation Info</title>
+</head>
+<body>
+	<?php
+
+		if($_GET['fail'] == 'true')
+		{
+			$info = file("adfail.txt");
+			$cap="Migration Fail List";
+	
+		}
+		else if($_GET['fail'] == 'false')
+		{
+			$info = file("adsuccess.txt");
+			$cap="Migration Success List";
+		
+		}	
+		
+		$fwn = count($info);
+		echo "<div id='fail'>
+				<table border='0'>\n
+					<caption>".$cap."</caption>";
+					echo '<tr>
+          				<th bgcolor="#CCCCCC">Novell ID</th>
+		  				<th bgcolor="#CCCCCC">Local Username</th>
+		  				<th bgcolor="#CCCCCC">Workstation Name</th>
+	   				<tr>';
+	   
+
+			for ($i=0; $i<$fwn; $i++)
+			{
+				$line = explode( ",", $info[$i] );
+					echo "<tr>
+    	  					<td>$line[0]</td>
+      	  					<td>$line[1]</td>
+	  						<td>$line[2]</td>
+	  						</tr>";
+			}
+			echo "</table></div>";
+		fclose($info);
+	?>
+
+</body>
+</html>
