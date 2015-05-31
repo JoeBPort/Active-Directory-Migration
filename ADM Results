@@ -1,0 +1,32 @@
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="">
+<link rel='stylesheet' type='text/css' href="" />
+<link rel='stylesheet' type='text/css' href='ctech.css' />
+<!--[if IE]>
+  <link rel='stylesheet' type='text/css' href='ctechIE.css' />
+<![endif]-->
+<title>ADM Results</title>
+</head>
+<body background="http://www.ferris.edu/activgif/swipe.gif">
+  <div id='container'>
+    <div id='header'>
+      <img src='images/tacbanner.png' />
+     </div>
+      <div id='main' style='height:700px'>
+      <div id='content'>
+<body>
+<div align ="center">
+<iframe src="adm.php?fail=true" width="370px" height="500px" frameborder="0" style="position: absolute; top: 20px; left: 120px;"></iframe>
+<iframe src="adm.php?fail=false" width="350px" height="500px"frameborder="0"  style="position: absolute; top: 20px; right: 120px;" ></iframe><br/><br/>
+<div style="position: absolute; top: 550px; left: 25%;">
+1 = Already in AD Removed Novell Client<br/>
+2 = Successfully added workstation to AD and removed Novell Client.
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>
