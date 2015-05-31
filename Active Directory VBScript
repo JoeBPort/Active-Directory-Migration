@@ -1,0 +1,90 @@
+Option Explicit
+dim ServerShare
+dim UserName
+dim Password
+dim NetworkObject
+dim FSO
+ServerShare = ""
+UserName = ""
+Password = ""
+Set NetworkObject = CreateObject("WScript.Network")
+Set FSO = CreateObject("Scripting.FileSystemObject")
+On Error Resume Next
+NetworkObject.MapNetworkDrive "R:", ServerShare, False, UserName, Password
+ 
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''<this will grab the novell id>
+Const HKEY_LOCAL_MACHINE = &H80000002
+dim strComputer
+strComputer = "."
+dim oReg
+Set oReg=GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & _ 
+    strComputer & "\root\default:StdRegProv")
+dim strKeyPath
+strKeyPath = "SOFTWARE\Novell\Login\Profiles\Users\"
+dim arrSubKeys
+oReg.EnumKey HKEY_LOCAL_MACHINE, strKeyPath, arrSubKeys
+dim nov
+On Error Resume Next
+dim subkey
+For Each subkey In arrSubKeys
+  nov = subkey
+Next
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''This will grab the name of the curent <workgroup/domain>
+dim dom
+set dom = getobject("winmgmts://")
+  wql = "select domain from win32_computersystem"
+   set results = dom.execquery(wql)
+dim gr
+for each work in results
+gr = work.Domain
+next
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''This wil grab the <computer name>
+Dim strCompName
+Dim objNetwork
+Set objNetwork = CreateObject("WScript.Network")
+strCompName = objNetwork.ComputerName
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''This will grab the <username>
+Dim strUserName
+Dim objNet
+Set objNet = CreateObject("WScript.Network")
+strUserName = objNet.UserName
+
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''This is the main block of code for conditions
+If gr = "ferris.local" Then
+dim strCommand
+dim WshSHell
+dim objExec
+strCommand = "R:\AC\ADMscript\Migrate.exe"
+Set WshShell = WScript.CreateObject("WScript.Shell")
+Set objExec = Wshshell.Exec(strCommand)
+
+dim slog
+Set slog = CreateObject("Scripting.FileSystemObject").OpenTextFile("R:\AC\ADMscript\adsuccess.txt",8,false)
+slog.WriteLine("1, novellID:" & nov & ",Local Profile ID:" & strUserName & ",Computer Name:" & strCompName )
+slog.Close
+Set slog = Nothing
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''The block above will remove the novell client if the condition is true, Then it will output the results to the adsuccess file,
+elseif nov = strUserName then
+dim strCommand2
+dim WshShell2
+dim objExec2
+strCommand2 = "R:\AC\ADMscript\iexplore.exe"
+Set WshShell2 = WScript.CreateObject("WScript.Shell")
+Set objExec2 = Wshshell2.Exec(strCommand2)
+
+dim slog2
+Set slog2 = CreateObject("Scripting.FileSystemObject").OpenTextFile("R:\AC\ADMscript\adsuccess.txt",8,false)
+slog2.WriteLine( "2, novellID:" & nov & ",Local Profile ID:" & strUserName & ",Computer Name:" & strCompName )
+slog2.Close
+Set slog2 = Nothing
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''If the workstation is not in the domain but the novell username is equal to the local workstation name it will run the migration tool. Then it will write to the success file
+else
+wscript.echo "Migration failed"
+dim newlog
+Set newlog = CreateObject("Scripting.FileSystemObject").OpenTextFile("R:\AC\ADMscript\adfail.txt",8,false)
+newlog.WriteLine( "novellID:" & nov & ",Local Profile ID:" & strUserName & ",Computer Name:" & strCompName )
+newlog.Close
+Set newlog = Nothing
+end if
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''The block of code will the workstations information if none of the conditions are true.
